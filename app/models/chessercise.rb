@@ -183,22 +183,147 @@ class Chessercise
       end
   end
 
+
+  # Returns path of a piece when postion and direction is provided
+  def inpath(position, direction)
+      now = getposition(position)
+      path = []
+      chessercise = Chessercise.new
+      for i in (1..9) do
+          if chessercise.send(direction.to_sym, now) == nil
+            break
+          end
+          now = chessercise.send(direction.to_sym, now)
+          path.push(now)
+          now = getposition(now)
+      end
+      return path
+  end
+
+  # Finds longest length and check if current tile comes under target
+  def path_len_tile(path, target)
+      # print target
+      if path
+          result = nil
+          for i in path
+              # print i
+              if target.include? i
+                  # print "In target"
+                  result = i, path.index(i)
+                  break
+              end
+          end
+          # print result
+          if result == nil
+              result = path[-1], path.index(path[-1])
+          end
+      else
+          result = 0,0
+      end
+      # print result
+      return result
+  end
+
+  # Function to find longest path for Queen
+  def QUEEN_long_path(position, target)
+      now = getposition(position)
+      moves = ['move_down', 'move_up', 'move_right', 'move_left', 'move_down_right', 'move_down_left', 'move_up_right',
+               'move_up_left']
+      steps = 0
+      long_position = ''
+      for i in moves do
+          # print i
+          path = inpath(position, i)
+          # print path
+          long_tile = path_len_tile(path, target)
+          # print long_tile
+          if long_tile.any? && long_tile[1] > steps
+              steps = long_tile[1]
+              long_position = long_tile[0]
+          end
+      end
+
+      return [long_position, steps+1]
+  end
+
+  # Function to find longest path for Rook
+  def ROOK_long_path(position, target)
+      now = getposition(position)
+      moves = ['move_down', 'move_up', 'move_right', 'move_left']
+
+      steps = 0
+      long_position = ''
+      for i in moves do
+          path = inpath(position, i)
+          # print path
+          long_tile = path_len_tile(path, target)
+          # print long_tile
+          if long_tile.any? && long_tile[1] > steps
+              steps = long_tile[1]
+              long_position = long_tile[0]
+          end
+      end
+      return [long_position, steps + 1]
+      # print ROOK_long_path('h5')
+  end
+
+  # Function to find longest path for Knigh
+  def Knight_long_path(position, target)
+      possible_moves = []
+      moves = ['move_down', 'move_up', 'move_right', 'move_left']
+      chessercise = Chessercise.new
+      for i in moves do
+                for j in moves do
+                    now = getposition(position)
+                    if i != j
+                        if @directions_flag[i.to_sym] != @directions_flag[j.to_sym]
+                            if chessercise.send(i.to_sym, now) != nil
+                                mv_now = chessercise.send(i.to_sym, now)
+                                now = getposition(mv_now)
+                                if chessercise.send(j.to_sym, now) != nil
+                                    mv_now = chessercise.send(j.to_sym, now)
+                                    now = getposition(mv_now)
+                                    if chessercise.send(j.to_sym, now) != nil
+                                        mv_now = chessercise.send(j.to_sym, now)
+                                        possible_moves.push(mv_now)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+      return possible_moves
+      # print Knight_long_path('d2')
+  end
+
 end
 
 
 piece = ARGV[1]
 position = ARGV[3]
+target = ARGV[5]
 
 chessercise = Chessercise.new
 print "pieceeeee", piece
 
+if piece == 'KNIGHT'
+    print "Possible positions: ",chessercise.Knight(position)
+elsif piece == 'QUEEN'
+    print "Possible positions: ",chessercise.QUEEN(position,'all')
+elsif piece == 'ROOK'
+    print "Possible positions: ",chessercise.ROOK(position)
+else
+    print "piece not found"
+end
 
-    if piece == 'KNIGHT'
-        print "Possible positions: ",chessercise.Knight(position)
-    elsif piece == 'QUEEN'
-        print "Possible positions: ",chessercise.QUEEN(position,'all')
-    elsif piece == 'ROOK'
-        print "Possible positions: ",chessercise.ROOK(position)
-    else
-        print "piece not found"
-    end
+
+if piece == 'KNIGHT' && target != nil
+    print "Longest path: ",chessercise.Knight_long_path(position, target)
+elsif piece == 'QUEEN' && target != nil
+    print "Longest path: ",chessercise.QUEEN_long_path(position, target)
+elsif piece == 'ROOK' && target != nil
+    print "Longest path: ",chessercise.ROOK_long_path(position, target)
+else
+    print "piece not found"
+end
