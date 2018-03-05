@@ -1,13 +1,6 @@
-# README
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
 Run the below example commands from terminal in order to execute:
 
-Clone the project and cd
+Clone the project and cd inmar_test
 
 cd app/models/chessercise.rb
 
@@ -22,3 +15,5 @@ Determine the physically most distant tile from Current position. Calculate and 
 ruby chessercise.rb -piece KNIGHT -position a3 -target ['a8', 'c3', 'b7']
 ruby chessercise.rb -piece QUEEN -position a3 -target ['a8', 'c3', 'b7']
 ruby chessercise.rb -piece ROOK -position a3 -target ['a8', 'c3', 'b7']
+
+ThoughtExcersise.md will address the ThoughtExcersise task
